@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Monitoring Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">NETWORK OPERATIONS</p>
+        <h1>Network Monitor</h1>
+        <p class="subtitle">Cisco Routers · SNMP · Kafka</p>
+      </div>
+      <div class="status-pill">
+        <span id="statusDot" class="status-dot"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </header>
+
+    <section class="section-heading">
+      <div>
+        <h2>Network Overview</h2>
+        <p>Current traffic summary from monitored interfaces</p>
+      </div>
+      <span class="refresh-label">AUTO REFRESH · 2 SEC</span>
+    </section>
+
+    <section class="summary-grid">
+      <article class="metric-card">
+        <div class="metric-top"><span>ROUTERS</span><span class="metric-icon">◎</span></div>
+        <h3 id="routerCount">0</h3>
+        <p>Routers reporting data</p>
+      </article>
+      <article class="metric-card">
+        <div class="metric-top"><span>INTERFACES</span><span class="metric-icon">⌘</span></div>
+        <h3 id="interfaceCount">0</h3>
+        <p>Interfaces with samples</p>
+      </article>
+      <article class="metric-card">
+        <div class="metric-top"><span>RX TRAFFIC</span><span class="metric-icon rx-icon">↓</span></div>
+        <h3><span id="rxTotal">0.0000</span><small> Mbps</small></h3>
+        <p>Total latest incoming rate</p>
+      </article>
+      <article class="metric-card">
+        <div class="metric-top"><span>TX TRAFFIC</span><span class="metric-icon tx-icon">↑</span></div>
+        <h3><span id="txTotal">0.0000</span><small> Mbps</small></h3>
+        <p>Total latest outgoing rate</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Router Interfaces</h2>
+          <p>Latest SNMP traffic by router and interface</p>
+        </div>
+        <span id="interfaceBadge" class="count-badge">0 interfaces</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>ROUTER</th>
+              <th>ROUTER IP</th>
+              <th>INTERFACE</th>
+              <th>RX Mbps</th>
+              <th>TX Mbps</th>
+              <th>LAST UPDATE</th>
+            </tr>
+          </thead>
+          <tbody id="interfaceTable">
+            <tr><td colspan="6" class="empty">Waiting for SNMP samples...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-heading chart-title-row">
+        <div>
+          <h2>Traffic History</h2>
+          <p>RX and TX over the latest collected samples</p>
+        </div>
+        <label class="filter-label">
+          Router
+          <select id="routerFilter">
+            <option value="all">All routers</option>
+          </select>
+        </label>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="trafficChart"></canvas>
+      </div>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="panel system-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Collector Status</h2>
+            <p>Data ingestion overview</p>
+          </div>
+        </div>
+        <div class="system-row">
+          <span>SNMP data</span>
+          <strong id="dataStatus">Waiting</strong>
+        </div>
+        <div class="system-row">
+          <span>Last sample received</span>
+          <strong id="lastReceived">—</strong>
+        </div>
+        <div class="system-row">
+          <span>Kafka topic</span>
+          <strong><code>snmp</code></strong>
+        </div>
+        <div class="system-row">
+          <span>Dashboard API</span>
+          <strong><code>Flask :5002</code></strong>
+        </div>
+      </article>
+
+      <article class="panel info-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>About This Monitor</h2>
+            <p>Monitoring pipeline</p>
+          </div>
+        </div>
+        <div class="pipeline">
+          <span> Cisco Router </span><b>→</b>
+          <span> SNMP Collector </span><b>→</b>
+          <span> Kafka </span><b>→</b>
+          <span> Flask Dashboard </span>
+        </div>
+        <p class="note">Traffic rates are calculated by the SNMP collector from interface counters. Router reachability is not independently verified by this dashboard.</p>
+      </article>
+    </section>
+
+    <footer>SNMP Router Traffic Monitor · Live data from Kafka topic <code>snmp</code></footer>
+  </main>
+
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
